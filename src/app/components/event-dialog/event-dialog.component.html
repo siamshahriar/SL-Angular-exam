@@ -1,0 +1,67 @@
+<div class="dialog-header">
+  <h2 mat-dialog-title>{{ mode === 'add' ? 'Add New Event' : 'Event Details' }}</h2>
+  <button mat-icon-button class="close-button" (click)="onCancel()" aria-label="Close dialog">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <div class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Event Name</mat-label>
+      <input matInput [(ngModel)]="title" placeholder="Enter event name" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput [(ngModel)]="description" rows="3" placeholder="Enter description"></textarea>
+    </mat-form-field>
+
+    <div class="time-row">
+      <mat-form-field appearance="outline" class="time-field">
+        <mat-label>Start Time</mat-label>
+        <mat-select [(ngModel)]="startTime" (ngModelChange)="onTimeChange()" required>
+          <mat-option *ngFor="let slot of timeSlots" [value]="slot.time">
+            {{ slot.time }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="time-field">
+        <mat-label>End Time</mat-label>
+        <mat-select [(ngModel)]="endTime" (ngModelChange)="onTimeChange()" required>
+          <mat-option *ngFor="let slot of timeSlots" [value]="slot.time">
+            {{ slot.time }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="venue-selection">
+      <label class="venue-label">Select Venue(s):</label>
+      <div class="venue-chips">
+        <button 
+          *ngFor="let venue of venues" 
+          mat-raised-button
+          [color]="isVenueSelected(venue.id) ? 'primary' : ''"
+          [disabled]="isVenueDisabled(venue.id)"
+          (click)="toggleVenue(venue.id)"
+          class="venue-chip"
+          [class.occupied]="isVenueOccupied(venue.id)">
+          {{ venue.name }}
+          <span *ngIf="isVenueOccupied(venue.id)" class="occupied-badge">(Occupied)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="warn" (click)="onDelete()" *ngIf="mode === 'edit'">
+    <mat-icon>delete</mat-icon> Delete
+  </button>
+  <button mat-raised-button color="primary" (click)="onSave()">
+    <mat-icon>save</mat-icon> {{ mode === 'add' ? 'Add Event' : 'Save Changes' }}
+  </button>
+</mat-dialog-actions>

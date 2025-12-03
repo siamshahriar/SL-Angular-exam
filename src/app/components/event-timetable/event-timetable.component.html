@@ -1,0 +1,118 @@
+<div class="timetable-container">
+  <!-- Date Header (Material Tabs) -->
+  <mat-tab-group 
+    [(selectedIndex)]="selectedDateIndex" 
+    (selectedIndexChange)="onDateTabChange($event)"
+    class="date-tabs">
+    <mat-tab *ngFor="let dateInfo of dates">
+      <ng-template mat-tab-label>
+        <div class="tab-label">
+          <div class="day-name">{{ dateInfo.dayName }}</div>
+          <div class="date-string">{{ dateInfo.dateString }}</div>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+
+  <!-- Timetable Grid -->
+  <div class="timetable-grid-wrapper" *ngIf="selectedDate">
+    <!-- Venue Header Row -->
+    <div class="venue-header-wrapper">
+      <div class="time-column-header">Time</div>
+      <div class="venue-header-scroll" #venueHeader (wheel)="onVenueHeaderWheel($event)">
+        <table class="venue-header-table">
+          <tr>
+            <th 
+              *ngFor="let venue of venues; let last = last" 
+              class="venue-cell"
+              [class.last-venue]="last">
+              <div class="venue-header-content">
+                <span>{{ venue.name }}</span>
+                <button 
+                  *ngIf="canDeleteVenue(venue.id)"
+                  mat-icon-button 
+                  class="delete-venue-btn"
+                  (click)="deleteVenue(venue)"
+                  matTooltip="Delete venue">
+                  <mat-icon>close</mat-icon>
+                </button>
+                <button 
+                  *ngIf="last"
+                  mat-icon-button 
+                  class="add-venue-btn"
+                  (click)="addVenue()"
+                  matTooltip="Add new venue">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </th>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Time and Event Grid -->
+    <div class="grid-content-wrapper" (scroll)="onGridScroll($event)">
+      <!-- Time Column (Fixed Left) -->
+      <div class="time-column" #timeColumn (wheel)="onTimeColumnWheel($event)">
+        <div 
+          *ngFor="let slot of timeSlots; let last = last" 
+          class="time-cell"
+          [class.last-time]="last">
+          <span class="time-label">{{ slot.time }}</span>
+          <div class="time-actions">
+            <button 
+              *ngIf="last"
+              mat-icon-button 
+              class="add-time-btn"
+              (click)="addTimeSlot()">
+              <mat-icon>add</mat-icon>
+            </button>
+            <button 
+              *ngIf="canDeleteTimeSlot(slot.time)"
+              mat-icon-button 
+              class="delete-time-btn"
+              (click)="deleteTimeSlot(slot)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Grid (Scrollable) -->
+      <div class="event-grid-scroll" #eventGrid (scroll)="onEventGridScroll($event)">
+        <table class="event-grid-table">
+          <tbody>
+            <tr *ngFor="let slot of timeSlots" class="event-row">
+              <ng-container *ngFor="let venue of venues">
+                <ng-container *ngIf="getCellEvent(venue.id, slot.time) as event">
+                  <!-- Only render cell if it's the start of the event -->
+                  <td 
+                    *ngIf="isEventStart(event, venue.id, slot.time)"
+                    class="event-cell has-event"
+                    [attr.rowspan]="getEventRowSpan(event)"
+                    [attr.colspan]="getEventColSpan(event, venue.id)"
+                    (click)="onCellClick(venue.id, slot.time)">
+                    <div class="event-content" [style.background]="event.color || '#1976d2'">
+                      <div class="event-time-range">{{ event.startTime }} - {{ event.endTime }}</div>
+                      <div class="event-title">{{ event.title }}</div>
+                    </div>
+                  </td>
+                </ng-container>
+                <!-- Empty cell (clickable to add event) -->
+                <td 
+                  *ngIf="!getCellEvent(venue.id, slot.time)"
+                  class="event-cell empty-cell"
+                  (click)="onCellClick(venue.id, slot.time)">
+                  <div class="add-event-indicator">
+                    <mat-icon>add</mat-icon>
+                  </div>
+                </td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

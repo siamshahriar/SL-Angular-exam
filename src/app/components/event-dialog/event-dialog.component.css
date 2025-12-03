@@ -1,0 +1,77 @@
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  flex: 1;
+}
+
+.close-button {
+  position: relative;
+  top: -8px;
+  right: -8px;
+}
+
+.dialog-form {
+  min-width: 400px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.time-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.time-field {
+  flex: 1;
+}
+
+.venue-selection {
+  margin-top: 16px;
+}
+
+.venue-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.venue-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.venue-chip {
+  min-width: 80px;
+  position: relative;
+}
+
+.venue-chip.occupied {
+  opacity: 0.5;
+}
+
+.venue-chip:disabled {
+  cursor: not-allowed;
+}
+
+.occupied-badge {
+  font-size: 10px;
+  margin-left: 4px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+mat-dialog-actions {
+  padding-top: 16px;
+  margin-top: 16px;
+}
